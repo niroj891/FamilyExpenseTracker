@@ -1,0 +1,80 @@
+﻿
+@page "/"
+
+
+
+<div style="display: flex; justify-content: center; align-items: center; height: 100vh; background-color: #f1f1f1; margin: 0;">
+    <div style="display: flex; background-color: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); width: 100%; max-width: 800px;">
+
+        <!-- Left Div: Image -->
+        <div style="flex: 1; display: flex; justify-content: center; align-items: center; background-color: #e8e8e8; border-radius: 8px;">
+            <img src="images/expense.png" alt="Expense Image" style="max-width: 100%; height: 100%; border-radius: 8px;">
+        </div>
+
+        <!-- Right Div: Login Form -->
+        <div style="flex: 1; padding: 20px; text-align: center;">
+            <h3 style="color: #333; margin-bottom: 20px; font-size: 24px;">Login</h3>
+            <p style="color: #555; margin-bottom: 15px;">Enter your username and password</p>
+
+            @if (!string.IsNullOrEmpty(ErrorMessage))
+            {
+                <p style="color: red; font-size: 14px; margin-bottom: 10px;">@ErrorMessage</p>
+            }
+
+            <EditForm Model="this" OnValidSubmit="HandleLogin">
+                <input @bind="Username" type="text" placeholder="Enter Username"
+                       style="width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ccc; border-radius: 5px; font-size: 16px;"
+                       required />
+                <br />
+                <input @bind="Password" type="password" placeholder="Enter Password"
+                       style="width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ccc; border-radius: 5px; font-size: 16px;"
+                       required />
+                <br />
+
+                <button type="submit"
+                        style="width: 100%; padding: 12px; background-color: #007bff; color: white; border: none; border-radius: 5px; font-size: 16px; cursor: pointer; transition: background-color 0.3s ease;">
+                    Login
+                </button>
+            </EditForm>
+            <br />
+       
+        </div>
+    </div>
+</div>
+
+
+
+
+
+@code {
+    private string Username { get; set; } = string.Empty;
+    private string Password { get; set; } = string.Empty;
+    private string ErrorMessage { get; set; } = string.Empty;
+
+    private async Task HandleLogin()
+    {
+        try
+        {
+            var user = UserService.Login(Username, Password);
+            
+            if (user != null)
+            {
+                // Successful login
+                ErrorMessage = string.Empty;
+
+                // Navigate to the home page
+                nav.NavigateTo("/home");
+            }
+            else
+            {
+                // Login failed
+                ErrorMessage = "Invalid username or password. Please try again.";
+            }
+        }
+        catch (Exception ex)
+        {
+            // Handle unexpected errors
+            ErrorMessage = $"An error occurred: {ex.Message}";
+        }
+    }
+}
